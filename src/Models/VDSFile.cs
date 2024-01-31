@@ -2,7 +2,7 @@
 
 namespace Models
 {
-    public class File
+    public class VDSFile
     {
         public int Id { get; set; }
         public int UserId { get; set; }

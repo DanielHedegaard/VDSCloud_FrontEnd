@@ -5,9 +5,9 @@ VisualStudioVersion = 17.7.34202.233
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Web", "src\Web\Web.csproj", "{226FB4D6-227A-45B5-9DD5-030CDB86B93C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Models", "src\Models\Models.csproj", "{A94803AB-AB38-446D-A762-FF1FA10276CC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Models", "src\Models\Models.csproj", "{A94803AB-AB38-446D-A762-FF1FA10276CC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataService", "src\DataService\DataService.csproj", "{60EDA80B-B8DF-4146-81A2-439B2FA59ABF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataService", "src\DataService\DataService.csproj", "{60EDA80B-B8DF-4146-81A2-439B2FA59ABF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
