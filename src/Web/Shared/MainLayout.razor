@@ -1,18 +1,31 @@
 ﻿@inherits LayoutComponentBase
-<MudThemeProvider />
+
+<MudThemeProvider Theme="_currentTheme" />
 <MudDialogProvider />
 <MudSnackbarProvider />
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudLayout>
+    @Body
+</MudLayout>
 
-    <main>
-        
+@code { 
+    private readonly MudTheme _currentTheme = new()
+        {
+            Palette = new PaletteLight
+            {
+                // bluehexcolor to maybe use 1845bf
+                Primary = "#ffffff",
+                Secondary = "#ffffff",
+                Info = "#64a7e2",
+                Success = "#2ECC40",
+                Warning = "#FFC107",
+                Error = "#FF0000",
+                AppbarBackground = "#212121",
+                TextPrimary = "#ffffff",
+                TextSecondary = "#ffffff",
+                Background = "#6464d0",
+                // more color properties
+            }
+        };
+}
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
