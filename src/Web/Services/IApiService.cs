@@ -5,31 +5,26 @@ namespace Web.Services
     public interface IApiService
     {
         //user
-        Task<User> GetUser(int id);
-        Task<bool> CreateUser(User user);
-
+        Task<User?> GetUserAsync(int id);
+        Task<bool?> CreateUserAsync(User user);
+        Task<bool?> UserLoginAsync(User user);
 
         //file
-        Task<VDSFile> GetFile(int userId);
-        Task<List<VDSFile>> GetFileList(int userId);
-        Task<bool> CreateFile(VDSFile file);
-        Task<bool> DeleteFile(int fileId);
-        Task<bool> UpdateFile(VDSFile file);
+        Task<VDSFile?> GetFileAsync(int fileId);
+        Task<List<VDSFile>?> GetFileListAsync();
+        Task<bool?> CreateFileAsync(VDSFile file);
+        Task<bool?> DeleteFileAsync(int fileId);
+        Task<bool?> UpdateFileAsync(VDSFile file);
 
         //folder
-        Task<Folder> GetFolder(int userId); 
-        Task<List<Folder>> GetFolderList(int userId);
-        Task<bool> CreateFolder(Folder folder);
-        Task<bool> DeleteFolder(int folderId);
-        Task<bool> UpdateFolder(Folder folder);
-
+        Task<Folder?> GetFolderAsync(int folderId); 
+        Task<List<Folder>?> GetFolderListAsync();
+        Task<bool?> CreateFolderAsync(Folder folder);
+        Task<bool?> DeleteFolderAsync(int folderId);
+        Task<bool?> UpdateFolderAsync(Folder folder);
 
         //log
-        Task<Log> GetLog();
-        Task<List<Log>> GetLogList();
-        Task<bool> CreateLog(Log log);
-        Task<bool> DeleteLog(int logId);
-
-
+        Task<Log?> GetLogAsync(int logId);
+        Task<List<Log>?> GetLogListAsync();
     }
 }
