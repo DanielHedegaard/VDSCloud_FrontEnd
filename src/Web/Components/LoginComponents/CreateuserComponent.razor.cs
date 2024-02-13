@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace Web.Components
+namespace Web.Components.LoginComponents
 {
     public partial class CreateuserComponent
     {
         [Parameter, EditorRequired]
-        public EventCallback SignInClickedCallback{ get; set; }
+        public EventCallback SignInClickedCallback { get; set; }
 
         //password hide variables
         bool isShow;

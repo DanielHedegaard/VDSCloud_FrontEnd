@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
 
-namespace Web.Components
+namespace Web.Components.LoginComponents
 {
     public partial class LoginComponent
     {

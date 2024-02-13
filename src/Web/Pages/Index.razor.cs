@@ -1,6 +1,4 @@
-﻿
-
-namespace Web.Pages
+﻿namespace Web.Pages
 {
     public partial class Index
     {
@@ -11,7 +9,6 @@ namespace Web.Pages
         {
             CreateUserbool = false;
         }
-
         public void HandleCreateUserClicked()
         {
             CreateUserbool = true;

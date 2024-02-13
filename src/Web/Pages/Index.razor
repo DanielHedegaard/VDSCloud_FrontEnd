@@ -1,10 +1,10 @@
 ﻿@using Web.Components
+@using Web.Components.LoginComponents
 @page "/"
 
 <PageTitle>Home</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="text-center backgroundcolor">
-
     @if (!LoggedIn)
     {
         if (CreateUserbool)
@@ -16,10 +16,9 @@
             <LoginComponent CreateUserClickedCallback="HandleCreateUserClicked"></LoginComponent>
         }
     }
-
     else
     {
-        <Overview></Overview>
+        <HomeComponent></HomeComponent>
     }
 </MudContainer>
 

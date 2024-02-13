@@ -1,0 +1,57 @@
+﻿<MudAppBar Color="Color.Dark" Fixed="false">
+    <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
+    <MudSpacer />
+    <MudLink Href="/home">
+        <MudImage Src="../Img/vdscloudlogo-nobg.png" Class="navVDSLogo"></MudImage>
+    </MudLink>
+    <MudSpacer />
+</MudAppBar>
+<MudDrawer Color="Color.Dark" Breakpoint="Breakpoint.SmAndUp" @bind-Open="@IsDrawerOpen" Elevation="1" Variant="@DrawerVariant.Responsive" PreserveOpenState="false">
+    <MudDrawerHeader>
+        <MudText Typo="Typo.h5">VDS Cloud</MudText>
+        <MudImage></MudImage>
+    </MudDrawerHeader>
+    <MudNavMenu>
+        <MudNavLink Match="NavLinkMatch.All">Home</MudNavLink>
+        <MudNavLink Match="NavLinkMatch.All">History</MudNavLink>
+    </MudNavMenu>
+    <MudButton Class="logOutBtn" Variant="Variant.Filled" Color="Color.Error">Logout</MudButton>
+</MudDrawer>
+
+@code {
+    public bool IsDrawerOpen { get; set; }
+
+    private void ToggleDrawer()
+    {
+        IsDrawerOpen = !IsDrawerOpen;
+    }
+    private readonly MudTheme _currentTheme = new()
+        {
+            Palette = new PaletteLight
+            {
+                // bluehexcolor to maybe use 1845bf
+                Primary = "#ffffff",
+                Secondary = "#ffffff",
+                Info = "#64a7e2",
+                Success = "#2ECC40",
+                Warning = "#FFC107",
+                Error = "#FF0000",
+                AppbarBackground = "#212121",
+                TextPrimary = "#ffffff",
+                TextSecondary = "#ffffff",
+                Background = "#6464d0",
+                // more color properties
+            }
+        };
+}
+<style>
+    .navVDSLogo {
+        width: 60%;
+        /* margin-left: 25%; */
+    }
+    .logOutBtn{
+        position:absolute;
+        bottom:6.8%;
+        width:100%;
+    }
+</style>

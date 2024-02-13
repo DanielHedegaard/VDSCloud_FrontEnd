@@ -5,17 +5,10 @@
 <MudSnackbarProvider />
 
 <MudLayout>
-    <Navbar></Navbar>
     @Body
 </MudLayout>
 
-@code { 
-    public bool IsDrawerOpen { get; set; }
-
-    private void ToggleDrawer()
-    {
-        IsDrawerOpen = !IsDrawerOpen;
-    }
+@code {
     private readonly MudTheme _currentTheme = new()
         {
             Palette = new PaletteLight
@@ -35,9 +28,3 @@
             }
         };
 }
-<style>
-    .navVDSLogo {
-        width: 60%;
-        margin-left: 25%;
-    }
-</style>
