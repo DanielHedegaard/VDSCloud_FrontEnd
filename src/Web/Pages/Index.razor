@@ -1,29 +1,37 @@
 ﻿@using Web.Components
 @using Web.Components.LoginComponents
+@using Web.Utilities
+@inject SessionStorageAccessor SessionStorageAccessor
 @page "/"
 
-<PageTitle>Home</PageTitle>
+@if (!LoggedIn)
+{
+    <PageTitle>Login</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="text-center backgroundcolor">
-    @if (!LoggedIn)
-    {
-        if (CreateUserbool)
+    <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="text-center backgroundcolor">
+        @if (CreateUserbool)
         {
-            <CreateuserComponent SignInClickedCallback="HandleSignInClicked"></CreateuserComponent>
+        <CreateuserComponent SignInClickedCallback="HandleSignInClicked"></CreateuserComponent>
         }
         else
         {
-            <LoginComponent CreateUserClickedCallback="HandleCreateUserClicked"></LoginComponent>
+        <LoginComponent CreateUserClickedCallback="HandleCreateUserClicked" LoginCallback="HandleLoginCallback"></LoginComponent>
         }
-    }
-    else
-    {
+    </MudContainer>
+}
+else
+{
+    <PageTitle>Home</PageTitle>
+
+    <Navbar LogoutCallback="HandleLogoutCallback"></Navbar>
+
+    <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="text-center backgroundcolor">
         <HomeComponent></HomeComponent>
-    }
-</MudContainer>
+    </MudContainer>
+}
 
 <style>
-    .backgroundcolor{
+    .backgroundcolor {
         background-color: #6464d0;
     }
 </style>

@@ -1,8 +1,8 @@
 ﻿<MudAppBar Color="Color.Dark" Fixed="false">
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
     <MudSpacer />
-    <MudLink Href="/home">
-        <MudImage Src="../Img/vdscloudlogo-nobg.png" Class="navVDSLogo"></MudImage>
+    <MudLink Href="/">
+        <MudImage Src="../Img/vdscloudlogo-nobg.png" Class="navVDSLogo ml-16"></MudImage>
     </MudLink>
     <MudSpacer />
 </MudAppBar>
@@ -15,10 +15,13 @@
         <MudNavLink Match="NavLinkMatch.All">Home</MudNavLink>
         <MudNavLink Match="NavLinkMatch.All">History</MudNavLink>
     </MudNavMenu>
-    <MudButton Class="logOutBtn" Variant="Variant.Filled" Color="Color.Error">Logout</MudButton>
+    <MudButton Class="logOutBtn" Variant="Variant.Filled" Color="Color.Error" OnClick="LogoutCallback">Logout</MudButton>
 </MudDrawer>
 
 @code {
+    [Parameter, EditorRequired]
+    public EventCallback LogoutCallback { get; set; }
+
     public bool IsDrawerOpen { get; set; }
 
     private void ToggleDrawer()

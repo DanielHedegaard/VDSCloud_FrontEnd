@@ -1,20 +1,22 @@
-﻿<MudGrid>
-    <MudItem xs="12">
-        <MudContainer MaxWidth="MaxWidth.Small">
-            <MudImage src="../img/vdscloudlogo.png" Class="vdscloudlogo" />
-            <MudForm>
-                <MudTextField T="string" Label="Username" Variant="Variant.Filled"></MudTextField>
-                <br />
-                <MudTextField T="string" Label="Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password"/>
-                <br />
-                <MudButton Variant="Variant.Filled" Color="Color.Success" Class="px-5">Login</MudButton>
-            </MudForm>
-        </MudContainer>
-        <br />
-        <MudText Color="Color.Info">Don't have an account? <MudLink Color="Color.Info" Underline="Underline.Always" OnClick="CreateUserClickedCallback">Sign up</MudLink></MudText>
-    </MudItem>
-</MudGrid>
+﻿@using Web.Utilities
+@inject SessionStorageAccessor SessionStorageAccessor
 
+<EditForm Model="UserModel" OnValidSubmit="OnValidLoginSubmit">
+    <MudGrid>
+        <MudItem xs="12">
+            <MudContainer MaxWidth="MaxWidth.Small">
+                <MudImage src="../img/vdscloudlogo.png" Class="vdscloudlogo" />
+                <MudTextField T="string" Label="Username" Variant="Variant.Filled" @bind-Value="UserModel.UserName"></MudTextField>
+                <br />
+                <MudTextField T="string" Label="Password" Variant="Variant.Filled" InputType="@PasswordInput" @bind-Value="UserModel.Password" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password" />
+                <br />
+                <MudButton Variant="Variant.Filled" Color="Color.Success" Class="px-5" ButtonType="ButtonType.Submit" OnClick="LoginCallback">Login</MudButton>
+            </MudContainer>
+            <br />
+            <MudText Color="Color.Info">Don't have an account? <MudLink Color="Color.Info" Underline="Underline.Always" OnClick="CreateUserClickedCallback">Sign up</MudLink></MudText>
+        </MudItem>
+    </MudGrid>
+</EditForm>
 <style>
     .vdscloudlogo {
         max-height: 70%;
