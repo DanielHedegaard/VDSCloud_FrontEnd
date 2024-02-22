@@ -2,16 +2,12 @@
     <MudItem xs="12">
         <MudContainer MaxWidth="MaxWidth.Small">
             <MudImage src="../img/vdscloudlogo.png" Class="vdscloudlogo" />
-            <MudForm>
-                <MudTextField T="string" Label="Username" Variant="Variant.Filled"></MudTextField>
-                <br />
-                <MudTextField T="string" Label="Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password"/>
-                <br />
-                <MudButton Variant="Variant.Filled" Color="Color.Success" Class="px-5">Login</MudButton>
-            </MudForm>
+            <MudTextField T="string" Label="Username" @bind-Value="UserSession.User.UserName" Variant="Variant.Filled"></MudTextField>
+            <br />
+            <MudTextField T="string" Label="Password" @bind-Value="UserSession.User.Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password" />
+            <br />
+            <MudButton Variant="Variant.Filled" Color="Color.Success" Class="px-5" ButtonType="ButtonType.Submit" OnClick="LoginClickedCallback" Disabled="ButtonDisabled">Login</MudButton>
         </MudContainer>
-        <br />
-        <MudText Color="Color.Info">Don't have an account? <MudLink Color="Color.Info" Underline="Underline.Always" OnClick="CreateUserClickedCallback">Sign up</MudLink></MudText>
     </MudItem>
 </MudGrid>
 

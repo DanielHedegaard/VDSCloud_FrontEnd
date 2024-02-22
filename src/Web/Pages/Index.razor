@@ -1,29 +1,37 @@
 ﻿@using Web.Components
 @using Web.Components.LoginComponents
+
 @page "/"
 
 <PageTitle>Home</PageTitle>
 
-<MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="text-center backgroundcolor">
-    @if (!LoggedIn)
-    {
-        if (CreateUserbool)
+@if (!UserSession.LoggedIn())
+{
+    <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="text-center backgroundcolor">
+        @if (CreateUserbool)
         {
-            <CreateuserComponent SignInClickedCallback="HandleSignInClicked"></CreateuserComponent>
+            <CreateuserComponent CreateUserClickedCallback="HandleCreateUser" UserSession="UserSession"/>
+            <br/>
+            <MudText Color="Color.Info">Already have an account? <MudLink Color="Color.Info" Underline="Underline.Always" OnClick="InvertCreateUserState">Sign in</MudLink></MudText>
         }
         else
         {
-            <LoginComponent CreateUserClickedCallback="HandleCreateUserClicked"></LoginComponent>
+            <LoginComponent UserSession="UserSession" LoginClickedCallback="HandleLogin"/>
+            <br />
+            <MudText Color="Color.Info">Don't have an account? <MudLink Color="Color.Info" Underline="Underline.Always" OnClick="InvertCreateUserState">Sign up</MudLink></MudText>
         }
-    }
-    else
-    {
-        <HomeComponent></HomeComponent>
-    }
-</MudContainer>
+    </MudContainer>
+}
+else
+{
+    <Navbar LogoutCallback="HandleLogout"></Navbar>
+    <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="text-center backgroundcolor">
+        <HomeComponent />
+    </MudContainer>
+}
 
 <style>
-    .backgroundcolor{
+    .backgroundcolor {
         background-color: #6464d0;
     }
 </style>

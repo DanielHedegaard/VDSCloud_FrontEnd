@@ -1,12 +1,33 @@
 ﻿using Microsoft.AspNetCore.Components;
 using MudBlazor;
+using Web.Models;
 
 namespace Web.Components.LoginComponents
 {
     public partial class CreateuserComponent
     {
         [Parameter, EditorRequired]
-        public EventCallback SignInClickedCallback { get; set; }
+        public EventCallback CreateUserClickedCallback { get; set; }
+
+        [Parameter, EditorRequired]
+        public UserSession UserSession { get; set; }
+
+        private bool ButtonDisabled
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(UserSession.User.UserName) 
+                    || string.IsNullOrEmpty(UserSession.User.Password)
+                    || UserSession.User.Password != PasswordReenter)
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
+        private string PasswordReenter { get; set; } = string.Empty;
 
         //password hide variables
         bool isShow;

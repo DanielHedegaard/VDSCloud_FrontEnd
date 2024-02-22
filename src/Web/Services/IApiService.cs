@@ -7,7 +7,9 @@ namespace Web.Services
         //user
         Task<User?> GetUserAsync(int id);
         Task<bool?> CreateUserAsync(User user);
-        Task<bool?> UserLoginAsync(User user);
+        Task<bool?> IsTokenValid(string token);
+        Task<string?> LogUserIn(string username, string password); // return token
+        Task<bool?> LogUserOut();
 
         //file
         Task<VDSFile?> GetFileAsync(int fileId);

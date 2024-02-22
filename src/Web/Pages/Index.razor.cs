@@ -1,24 +1,40 @@
-﻿namespace Web.Pages
+﻿using Microsoft.AspNetCore.Components;
+using Web.Models;
+using Web.Services;
+
+namespace Web.Pages
 {
     public partial class Index
     {
-        public bool LoggedIn { get; set; } = false;
-        public bool CreateUserbool { get; set; }
+        [Inject]
+        public IUserService UserService { get; set; }
 
-        protected override async Task OnInitializedAsync()
+        public bool CreateUserbool { get; set; } = false;
+        public UserSession UserSession { get; set; }
+
+        protected override void OnInitialized()
         {
-            CreateUserbool = false;
-        }
-        public void HandleCreateUserClicked()
-        {
-            CreateUserbool = true;
-            StateHasChanged();
-        }
-        public void HandleSignInClicked()
-        {
-            CreateUserbool = false;
-            StateHasChanged();
+            UserSession = new(UserService);
         }
 
+        public async Task HandleLogout()
+        {
+            await UserService.LogoutAsync();
+            StateHasChanged();
+        }
+
+        public async Task HandleLogin()
+        {
+            await UserService.LoginAsync(UserSession.User.UserName, UserSession.User.Password);
+            StateHasChanged();
+        }
+
+        public async Task HandleCreateUser()
+        {
+            // Handle create user
+            StateHasChanged();
+        }
+
+        public void InvertCreateUserState() => CreateUserbool = !CreateUserbool;
     }
 }

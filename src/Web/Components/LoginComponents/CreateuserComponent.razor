@@ -3,17 +3,16 @@
         <MudContainer MaxWidth="MaxWidth.Small">
             <MudImage src="../img/vdscloudlogo.png" Class="vdscloudlogo"/>
             <MudForm>
-                <MudTextField Label="Username" Variant="Variant.Filled" T="string"></MudTextField>
+                <MudTextField Label="Username" @bind-Value="UserSession.User.UserName" Variant="Variant.Filled" T="string"></MudTextField>
                 <br />
-                <MudTextField T="string" Label="Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password" />
+                <MudTextField T="string" @bind-Value="UserSession.User.Password" Label="Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password" />
                 <br />
-                <MudTextField T="string" Label="Re-enter Password" Variant="Variant.Filled" InputType="@reEnterPassInp" Adornment="Adornment.End" AdornmentIcon="@reEnterPassInputIcon" OnAdornmentClick="ReEnterPassHideBtn" AdornmentAriaLabel="Show Password" />
+                <MudTextField T="string" @bind-Value="PasswordReenter" Label="Re-enter Password" Variant="Variant.Filled" InputType="@reEnterPassInp" Adornment="Adornment.End" AdornmentIcon="@reEnterPassInputIcon" OnAdornmentClick="ReEnterPassHideBtn" AdornmentAriaLabel="Show Password" />
                 <br /> <br />
-                <MudButton Variant="Variant.Filled" Color="Color.Success">Create account</MudButton>
+                <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="CreateUserClickedCallback" Disabled="ButtonDisabled">Create account</MudButton>
             </MudForm>
         </MudContainer>
         <br />
-        <MudText Color="Color.Info">Already have an account? <MudLink Color="Color.Info" Underline="Underline.Always" OnClick="SignInClickedCallback">Sign in</MudLink></MudText>
     </MudItem>
 </MudGrid>
 

@@ -27,16 +27,40 @@ namespace Web.Services
         {
             var uri = $"{_apiRoot}/user";
 
-            var result = await _httpClient.PostAsJsonAsync<User>(uri, user);
+            var result = await _httpClient.PostAsJsonAsync(uri, user);
 
             return result.IsSuccessStatusCode;
         }
-        
-        public async Task<bool?> UserLoginAsync(User user)
-        {
-            var uri = $"{_apiRoot}/user/authenticate";
 
-            var result = await _httpClient.PostAsJsonAsync(uri, user);
+        //login
+        public async Task<bool?> IsTokenValid(string token)
+        {
+            var uri = $"{_apiRoot}/user/validatetoken";
+
+            return await _httpClient.GetFromJsonAsync<bool>(uri);
+        }
+
+        public async Task<string?> LogUserIn(string username, string password)
+        {
+            var uri = $"{_apiRoot}/user/login";
+
+            User newUs = new User() { UserName = username, Password = password };
+
+            var result = await _httpClient.PostAsJsonAsync(uri, newUs);
+
+            if (!result.IsSuccessStatusCode)
+            {
+                return null;
+            }
+
+            return await result.Content.ReadAsStringAsync();
+        }
+
+        public async Task<bool?> LogUserOut()
+        {
+            var uri = $"{_apiRoot}/user/logout";
+
+            var result = await _httpClient.DeleteAsync(uri);
 
             return result.IsSuccessStatusCode;
         }
@@ -62,7 +86,7 @@ namespace Web.Services
             var uri = $"{_apiRoot}/file";
 
             var result = await _httpClient.PostAsJsonAsync(uri, file);
-            
+
             return result.IsSuccessStatusCode;
         }
 
@@ -113,7 +137,7 @@ namespace Web.Services
         {
             var uri = $"{_apiRoot}/folder";
 
-            var result = await _httpClient.PutAsJsonAsync<Folder>(uri, folder);
+            var result = await _httpClient.PutAsJsonAsync(uri, folder);
 
             return result?.IsSuccessStatusCode;
         }
