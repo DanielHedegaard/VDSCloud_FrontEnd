@@ -4,6 +4,7 @@
     {
         Task<bool> LoginAsync(string username, string password);
         Task<bool> LogoutAsync();
-        Task<bool> IsLoggedIn();
+        Task<bool> IsLoggedInAsync();
+        Task<bool> CreateUserAsync(string userName, string password);
     }
 }

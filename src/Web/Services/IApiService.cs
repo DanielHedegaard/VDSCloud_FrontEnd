@@ -6,7 +6,7 @@ namespace Web.Services
     {
         //user
         Task<User?> GetUserAsync(int id);
-        Task<bool?> CreateUserAsync(User user);
+        Task<string?> CreateUserAsync(string userName, string password);
         Task<bool?> IsTokenValid(string token);
         Task<string?> LogUserIn(string username, string password); // return token
         Task<bool?> LogUserOut();

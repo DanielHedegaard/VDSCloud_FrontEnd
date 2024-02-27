@@ -1,4 +1,5 @@
 ﻿using Models;
+using MudBlazor;
 using Web.Services;
 
 namespace Web.Models
@@ -15,6 +16,6 @@ namespace Web.Models
 
         public User User { get; set; } 
 
-        public bool LoggedIn() => _userService.IsLoggedIn().GetAwaiter().GetResult();
+        public bool LoggedIn() => _userService.IsLoggedInAsync().GetAwaiter().GetResult();
     }
 }

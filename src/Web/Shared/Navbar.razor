@@ -2,14 +2,13 @@
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
     <MudSpacer />
     <MudLink Href="/">
-        <MudImage Src="../Img/vdscloudlogo-nobg.png" Class="navVDSLogo ml-16"></MudImage>
+        <MudImage Src="../Img/vdscloudlogo-nobg.png" Class="navVDSLogo ml-16" />
     </MudLink>
     <MudSpacer />
 </MudAppBar>
 <MudDrawer Color="Color.Dark" Breakpoint="Breakpoint.SmAndUp" @bind-Open="@IsDrawerOpen" Elevation="1" Variant="@DrawerVariant.Responsive" PreserveOpenState="false">
     <MudDrawerHeader>
-        <MudText Typo="Typo.h5">VDS Cloud</MudText>
-        <MudImage></MudImage>
+        <MudText Typo="Typo.h5">VDS Cloud <MudIcon Icon="@Icons.Material.Filled.Cloud" Color="Color.Tertiary" Class="cloudIcon"/></MudText>
     </MudDrawerHeader>
     <MudNavMenu>
         <MudNavLink Match="NavLinkMatch.All">Home</MudNavLink>
@@ -28,25 +27,6 @@
     {
         IsDrawerOpen = !IsDrawerOpen;
     }
-
-    private readonly MudTheme _currentTheme = new()
-        {
-            Palette = new PaletteLight
-            {
-                // bluehexcolor to maybe use 1845bf
-                Primary = "#ffffff",
-                Secondary = "#ffffff",
-                Info = "#64a7e2",
-                Success = "#2ECC40",
-                Warning = "#FFC107",
-                Error = "#FF0000",
-                AppbarBackground = "#212121",
-                TextPrimary = "#ffffff",
-                TextSecondary = "#ffffff",
-                Background = "#6464d0",
-                // more color properties
-            }
-        };
 }
 <style>
     .navVDSLogo {
@@ -60,5 +40,10 @@
         position: absolute;
         bottom: 6.8%;
         width: 100%;
+    }
+
+    .cloudIcon{
+        height:35px;
+        width:40px;
     }
 </style>

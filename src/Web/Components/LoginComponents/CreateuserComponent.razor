@@ -5,9 +5,9 @@
             <MudForm>
                 <MudTextField Label="Username" @bind-Value="UserSession.User.UserName" Variant="Variant.Filled" T="string"></MudTextField>
                 <br />
-                <MudTextField T="string" @bind-Value="UserSession.User.Password" Label="Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password" />
+                <MudTextField T="string" @bind-Value="UserSession.User.Password" Label="Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password"/>
                 <br />
-                <MudTextField T="string" @bind-Value="PasswordReenter" Label="Re-enter Password" Variant="Variant.Filled" InputType="@reEnterPassInp" Adornment="Adornment.End" AdornmentIcon="@reEnterPassInputIcon" OnAdornmentClick="ReEnterPassHideBtn" AdornmentAriaLabel="Show Password" />
+                <MudTextField T="string" @bind-Value="PasswordReenter" Label="Re-enter Password" Variant="Variant.Filled" InputType="@reEnterPassInp" Adornment="Adornment.End" AdornmentIcon="@reEnterPassInputIcon" OnAdornmentClick="ReEnterPassHideBtn" AdornmentAriaLabel="Show Password"/>
                 <br /> <br />
                 <MudButton Variant="Variant.Filled" Color="Color.Success" OnClick="CreateUserClickedCallback" Disabled="ButtonDisabled">Create account</MudButton>
             </MudForm>

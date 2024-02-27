@@ -18,7 +18,7 @@ namespace Web.Services
         }
 
         //check for token, if token check for validity
-        public async Task<bool> IsLoggedIn()
+        public async Task<bool> IsLoggedInAsync()
         {
             try
             {
@@ -79,6 +79,25 @@ namespace Web.Services
             }
 
             _storageService.RemoveItem(LoginTokenKey);
+
+            return true;
+        }
+
+        public async Task<bool> CreateUserAsync(string userName, string password)
+        {
+            if (userName.IsNullOrEmpty() || password.IsNullOrEmpty())
+            {
+                return false;
+            }
+
+            var token = await _apiService.CreateUserAsync(userName, password);
+
+            if (token is null)
+            {
+                return false;
+            }
+
+            _storageService.SetItem<string>(LoginTokenKey, token);
 
             return true;
         }

@@ -23,13 +23,15 @@ namespace Web.Services
             return await _httpClient.GetFromJsonAsync<User>(uri);
         }
 
-        public async Task<bool?> CreateUserAsync(User user)
+        public async Task<string?> CreateUserAsync(string userName, string password)
         {
             var uri = $"{_apiRoot}/user";
 
-            var result = await _httpClient.PostAsJsonAsync(uri, user);
+            var newUser = new User() { UserName = userName, Password = password };
 
-            return result.IsSuccessStatusCode;
+            var result = await _httpClient.PostAsJsonAsync(uri, newUser);
+
+            return "token";
         }
 
         //login
@@ -44,9 +46,9 @@ namespace Web.Services
         {
             var uri = $"{_apiRoot}/user/login";
 
-            User newUs = new User() { UserName = username, Password = password };
+            User newUser = new User() { UserName = username, Password = password };
 
-            var result = await _httpClient.PostAsJsonAsync(uri, newUs);
+            var result = await _httpClient.PostAsJsonAsync(uri, newUser);
 
             if (!result.IsSuccessStatusCode)
             {

@@ -1,2 +1,102 @@
-﻿<br />
-<MudIcon Icon="@Icons.Material.Filled.Folder" Color="Color.Warning"></MudIcon>
+﻿@using Web.Models
+@using Web.Services
+@using global::Models
+@inject IJSRuntime JsRuntime
+
+<br />
+<br />
+
+<MudText Typo="Typo.h3" Color="Color.Primary">My File Explorer</MudText>
+<br />
+<MudGrid Justify="Justify.Center">
+    <MudItem xl="1"></MudItem>
+    <MudItem xl="10">
+        <MudCard Class="treeViewCard">
+            <MudTreeView Dense="false" Items="@TreeItems" Hover="true" Width="100%" Height="100%">
+                <ItemTemplate Context="item">
+                    <MudTreeViewItem Items="@item.TreeItems" Icon="@item.Icon" IconColor="Color.Warning">
+                        <BodyContent>
+                            <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
+                                @if (windowWidth < 1000)
+                                {
+
+                                    <MudText Style="justify-self: start;">@item.Text</MudText>
+                                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Primary">
+                                        @if (item.Icon == Icons.Material.Filled.Folder)
+                                        {
+                                            <MudMenuItem>
+                                                <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success"></MudIconButton>
+                                            </MudMenuItem>
+                                        }
+                                        <MudMenuItem>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Medium" Color="Color.Secondary"></MudIconButton>
+                                        </MudMenuItem>
+                                        <MudMenuItem>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" />
+                                        </MudMenuItem>
+                                        <MudMenuItem>
+                                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" />
+                                        </MudMenuItem>
+                                    </MudMenu>
+                                }
+                                @* if not mobile *@
+                                else
+                                {
+                                    <MudText Style="justify-self: start;">@item.Text</MudText>
+                                    <div style="justify-self: end;">
+                                        @if (item.Icon == Icons.Material.Filled.Folder)
+                                        {
+                                            <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success"></MudIconButton>
+                                        }
+                                        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Medium" Color="Color.Secondary"></MudIconButton>
+                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" />
+                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" />
+                                    </div>
+                                }
+
+                            </div>
+
+                        </BodyContent>
+                    </MudTreeViewItem>
+                </ItemTemplate>
+            </MudTreeView>
+            <MudSpacer />
+        </MudCard>
+    </MudItem>
+    <MudItem xl="1"></MudItem>
+</MudGrid>
+
+<style>
+    .treeViewCard {
+        background-color: #424242;
+        min-height: 700px;
+        min-width: 100%;
+    }
+
+    .trashCan {
+        color: #b1b3b1;
+    }
+
+    .titleColor {
+        color: #d1daff;
+        padding: 0px;
+    }
+
+    @@media only screen and (max-width : 1919px) {
+        .treeViewCard {
+            width: 1000px;
+        }
+    }
+
+    @@media only screen and (max-width: 1160px) {
+        .treeViewCard {
+            width: 500px;
+        }
+    }
+
+    @@media only screen and (max-width: 600px) {
+        .treeViewCard {
+            width: 300px;
+        }
+    }
+</style>

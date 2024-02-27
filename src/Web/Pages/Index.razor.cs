@@ -20,6 +20,7 @@ namespace Web.Pages
         public async Task HandleLogout()
         {
             await UserService.LogoutAsync();
+
             StateHasChanged();
         }
 
@@ -31,7 +32,10 @@ namespace Web.Pages
 
         public async Task HandleCreateUser()
         {
-            // Handle create user
+            await UserService.CreateUserAsync(UserSession.User.UserName, UserSession.User.Password);
+
+            CreateUserbool = false;
+
             StateHasChanged();
         }
 
