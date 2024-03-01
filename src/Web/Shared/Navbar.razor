@@ -1,4 +1,6 @@
-﻿<MudAppBar Class="pt-5" Color="Color.Dark" Fixed="false" Elevation="1">
+﻿@using Web.Models
+
+<MudAppBar Class="pt-5" Color="Color.Dark" Fixed="false" Elevation="1">
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
     <MudSpacer />
     <MudLink Href="/">
@@ -14,24 +16,34 @@
         <MudNavLink Match="NavLinkMatch.All">Home</MudNavLink>
         <MudNavLink Match="NavLinkMatch.All">History</MudNavLink>
     </MudNavMenu>
-    <MudButton Class="logOutBtn" Variant="Variant.Filled" Color="Color.Error" OnClick="LogoutCallback">Logout</MudButton>
+    <MudButton Class="logOutBtn" Variant="Variant.Filled" Color="Color.Error" OnClick="LogoutClicked" Disabled="LogoutDisabled">@LogoutText</MudButton>
 </MudDrawer>
 
 @code {
-    [Parameter, EditorRequired]
-    public EventCallback LogoutCallback { get; set; }
+    [Inject]
+    public Session Session { get; set; }
 
     public bool IsDrawerOpen { get; set; }
+
+    private bool LogoutDisabled { get; set; }
+
+    private string LogoutText { get; set; } = "Log out";
 
     private void ToggleDrawer()
     {
         IsDrawerOpen = !IsDrawerOpen;
     }
+
+    private void LogoutClicked()
+    {
+        LogoutDisabled = true;
+        LogoutText = "Logging out...";
+        Session.LogUserOut();
+    }
 }
 <style>
     .navVDSLogo {
         width: 60%;
-        /* margin-left: 25%; */
     }
     .navBarPos{
         padding-top:15px;
@@ -41,7 +53,6 @@
         bottom: 6.8%;
         width: 100%;
     }
-
     .cloudIcon{
         height:35px;
         width:40px;

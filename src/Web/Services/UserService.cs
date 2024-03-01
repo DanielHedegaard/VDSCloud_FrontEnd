@@ -6,6 +6,7 @@ namespace Web.Services
     public class UserService : IUserService
     {
         private const string LoginTokenKey = "vdslogintoken";
+        private const string UserNameKey = "vdsusername";
 
         private readonly ISyncLocalStorageService _storageService;
         private readonly IApiService _apiService;
@@ -22,19 +23,20 @@ namespace Web.Services
         {
             try
             {
-                if (!_storageService.ContainKey(LoginTokenKey))
+                if (!_storageService.ContainKey(LoginTokenKey) || !_storageService.ContainKey(UserNameKey))
                 {
                     return false;
                 }
 
                 var token = _storageService.GetItem<string>(LoginTokenKey);
+                var userName = _storageService.GetItem<string>(UserNameKey);
 
-                if (token is null)
+                if (token is null || userName is null)
                 {
                     return false;
                 }
 
-                var tokenValid = await _apiService.IsTokenValid(token);
+                var tokenValid = await _apiService.IsTokenValid(userName, token);
 
                 if (tokenValid is not null)
                 {
@@ -49,7 +51,6 @@ namespace Web.Services
             return false;
         }
 
-        //send to simone to validate, get token safe in localstorage
         public async Task<bool> LoginAsync(string username, string password)
         {
             if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
@@ -59,26 +60,21 @@ namespace Web.Services
 
             var token = await _apiService.LogUserIn(username, password);
 
-            if (token is null)
+            if (string.IsNullOrEmpty(token))
             {
                 return false; 
             }
 
             _storageService.SetItem<string>(LoginTokenKey, token);
+            _storageService.SetItem<string>(UserNameKey, username);
 
             return true;
         }
 
-        public async Task<bool> LogoutAsync()
+        public bool Logout()
         {
-            bool? isLoggedOut = await _apiService.LogUserOut();
-
-            if (isLoggedOut == false)
-            {
-                return false;
-            }
-
             _storageService.RemoveItem(LoginTokenKey);
+            _storageService.RemoveItem(UserNameKey);
 
             return true;
         }
@@ -90,14 +86,22 @@ namespace Web.Services
                 return false;
             }
 
-            var token = await _apiService.CreateUserAsync(userName, password);
+            var result = await _apiService.CreateUserAsync(userName, password);
 
-            if (token is null)
+            if (result is null || result == false)
+            {
+                return false;
+            }
+
+            var token = await _apiService.LogUserIn(userName, password);
+
+            if (string.IsNullOrEmpty(token))
             {
                 return false;
             }
 
             _storageService.SetItem<string>(LoginTokenKey, token);
+            _storageService.SetItem<string>(UserNameKey, userName);
 
             return true;
         }

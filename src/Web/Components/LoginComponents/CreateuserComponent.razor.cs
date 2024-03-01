@@ -6,28 +6,29 @@ namespace Web.Components.LoginComponents
 {
     public partial class CreateuserComponent
     {
-        [Parameter, EditorRequired]
-        public EventCallback CreateUserClickedCallback { get; set; }
+        [Inject]
+        public Session Session { get; set; }
 
-        [Parameter, EditorRequired]
-        public UserSession UserSession { get; set; }
+        public string CreateText { get; set; } = "Create account";
+        public bool CreateBtnDisabled { get; set; }
+        private string PasswordReenter { get; set; } = string.Empty;
 
-        private bool ButtonDisabled
+        protected override void OnInitialized()
         {
-            get
-            {
-                if (string.IsNullOrEmpty(UserSession.User.UserName) 
-                    || string.IsNullOrEmpty(UserSession.User.Password)
-                    || UserSession.User.Password != PasswordReenter)
-                {
-                    return true;
-                }
-
-                return false;
-            }
+            Session.User.UserName = string.Empty;
+            Session.User.Password = string.Empty;
         }
 
-        private string PasswordReenter { get; set; } = string.Empty;
+        private async Task CreateAcount()
+        {
+            CreateBtnDisabled = true;
+            CreateText = "Creating and logging in";
+
+            await Session.CreateUserAsync(PasswordReenter);
+
+            CreateText = "Create Account";
+            CreateBtnDisabled = false;
+        }
 
         //password hide variables
         bool isShow;

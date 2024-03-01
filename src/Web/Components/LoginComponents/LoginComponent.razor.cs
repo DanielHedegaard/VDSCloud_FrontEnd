@@ -13,34 +13,28 @@ namespace Web.Components.LoginComponents
         InputType PasswordInput = InputType.Password;
         string PasswordInputIcon = Icons.Material.Filled.VisibilityOff;
 
-        [Parameter, EditorRequired]
-        public EventCallback LoginClickedCallback { get; set; }
+        public string LoginText { get; set; } = "Login";
 
-        [Parameter, EditorRequired]
-        public UserSession UserSession { get; set; }
+        public bool LoginBtnDisabled { get; set; }
 
-        private bool ButtonDisabled 
-        { 
-            get
-            {
-                if(string.IsNullOrEmpty(UserSession.User.UserName) || string.IsNullOrEmpty(UserSession.User.Password))
-                {
-                    return true;
-                }
-
-                return false;
-            } 
-        }
+        [Inject]
+        public Session Session { get; set; }
 
         protected override void OnInitialized()
         {
-            if(UserSession == null)
-            {
-                throw new ArgumentException($"{nameof(UserSession)} cannot be null");
-            }
-            
-            UserSession.User.UserName = string.Empty;
-            UserSession.User.Password = string.Empty;
+            Session.User.UserName = string.Empty;
+            Session.User.Password = string.Empty;
+        }
+
+        private async Task LogginIn()
+        {
+            LoginBtnDisabled = true;
+            LoginText = "Logging in";
+
+            await Session.LogUserInAsync();
+
+            LoginText = "Login";
+            LoginBtnDisabled = false;
         }
 
         private void PassHideBtn()

@@ -1,43 +1,54 @@
 ﻿using Microsoft.AspNetCore.Components;
+using MudBlazor;
 using Web.Models;
-using Web.Services;
 
 namespace Web.Pages
 {
     public partial class Index
     {
         [Inject]
-        public IUserService UserService { get; set; }
+        public Session Session { get; set; }
+
+        [Inject]
+        public ISnackbar Snackbar { get; set; }
 
         public bool CreateUserbool { get; set; } = false;
-        public UserSession UserSession { get; set; }
 
-        protected override void OnInitialized()
+        public bool IsUserLoggedIn { get; set; }
+
+        protected override async Task OnInitializedAsync()
         {
-            UserSession = new(UserService);
+            IsUserLoggedIn = await Session.IsUserLoggedIn();
         }
 
-        public async Task HandleLogout()
+        protected async override Task OnAfterRenderAsync(bool firstRender)
         {
-            await UserService.LogoutAsync();
+            if (firstRender) 
+            {
+                Session.UserLoggedInEvent += Handle_UserStateChanged;
+                Session.UserLoggedOutEvent += Handle_UserStateChanged;
+                Session.LoginOrCreateUserErrorEvent += Handle_LoginOrCreateUserError;
+                StateHasChanged();
+            }
+            IsUserLoggedIn = await Session.IsUserLoggedIn();
+        }
 
+        private async void Handle_UserStateChanged()
+        {
+            IsUserLoggedIn = await Session.IsUserLoggedIn();
             StateHasChanged();
         }
 
-        public async Task HandleLogin()
+        private void Handle_LoginOrCreateUserError(string snackbarMessage)
         {
-            await UserService.LoginAsync(UserSession.User.UserName, UserSession.User.Password);
+            Snackbar.Add(snackbarMessage, Severity.Error, config =>
+            {
+                config.Icon = Icons.Material.Filled.Error;
+                config.IconColor = Color.Primary;
+                config.IconSize = Size.Large;
+            });
             StateHasChanged();
-        }
-
-        public async Task HandleCreateUser()
-        {
-            await UserService.CreateUserAsync(UserSession.User.UserName, UserSession.User.Password);
-
-            CreateUserbool = false;
-
-            StateHasChanged();
-        }
+        }   
 
         public void InvertCreateUserState() => CreateUserbool = !CreateUserbool;
     }

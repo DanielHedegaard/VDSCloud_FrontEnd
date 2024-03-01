@@ -2,11 +2,11 @@
     <MudItem xs="12">
         <MudContainer MaxWidth="MaxWidth.Small">
             <MudImage src="../img/vdscloudlogo.png" Class="vdscloudlogo" />
-            <MudTextField T="string" Label="Username" @bind-Value="UserSession.User.UserName" Variant="Variant.Filled"></MudTextField>
+            <MudTextField T="string" Label="Username" @bind-Value="Session.User.UserName" Variant="Variant.Filled"></MudTextField>
             <br />
-            <MudTextField T="string" Label="Password" @bind-Value="UserSession.User.Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password" />
+            <MudTextField T="string" Label="Password" @bind-Value="Session.User.Password" Variant="Variant.Filled" InputType="@PasswordInput" Adornment="Adornment.End" AdornmentIcon="@PasswordInputIcon" OnAdornmentClick="PassHideBtn" AdornmentAriaLabel="Show Password" />
             <br />
-            <MudButton Variant="Variant.Filled" Color="Color.Success" Class="px-5" ButtonType="ButtonType.Submit" OnClick="LoginClickedCallback" Disabled="ButtonDisabled">Login</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Success" Class="px-5" ButtonType="ButtonType.Submit" OnClick="LogginIn" Disabled="LoginBtnDisabled">@LoginText</MudButton>
         </MudContainer>
     </MudItem>
 </MudGrid>

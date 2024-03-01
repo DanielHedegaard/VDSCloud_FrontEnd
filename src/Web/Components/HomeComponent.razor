@@ -19,7 +19,6 @@
                             <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
                                 @if (windowWidth < 1000)
                                 {
-
                                     <MudText Style="justify-self: start;">@item.Text</MudText>
                                     <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Primary">
                                         @if (item.Icon == Icons.Material.Filled.Folder)
@@ -53,14 +52,14 @@
                                         <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" />
                                     </div>
                                 }
-
                             </div>
-
                         </BodyContent>
                     </MudTreeViewItem>
                 </ItemTemplate>
             </MudTreeView>
             <MudSpacer />
+            <MudSpacer />
+            <MudButton Size="Size.Large" Class="w-100 py-3">Add folder<MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success" /></MudButton>
         </MudCard>
     </MudItem>
     <MudItem xl="1"></MudItem>

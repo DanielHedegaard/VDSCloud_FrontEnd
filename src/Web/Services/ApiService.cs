@@ -1,5 +1,7 @@
-﻿using Models;
+﻿using Microsoft.IdentityModel.Tokens;
+using Models;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace Web.Services
 {
@@ -12,7 +14,7 @@ namespace Web.Services
         public ApiService(IConfiguration configuration)
         {
             _httpClient = new HttpClient();
-            _apiRoot = "localhost:3001/api";
+            _apiRoot = "https://localhost:7193/api";
         }
 
         //user
@@ -23,7 +25,7 @@ namespace Web.Services
             return await _httpClient.GetFromJsonAsync<User>(uri);
         }
 
-        public async Task<string?> CreateUserAsync(string userName, string password)
+        public async Task<bool?> CreateUserAsync(string userName, string password)
         {
             var uri = $"{_apiRoot}/user";
 
@@ -31,42 +33,49 @@ namespace Web.Services
 
             var result = await _httpClient.PostAsJsonAsync(uri, newUser);
 
-            return "token";
+            return result.IsSuccessStatusCode;
         }
 
         //login
-        public async Task<bool?> IsTokenValid(string token)
+        public async Task<bool?> IsTokenValid(string userName, string token)
         {
-            var uri = $"{_apiRoot}/user/validatetoken";
+            var uri = $"{_apiRoot}/user/istokenexpired";
 
-            return await _httpClient.GetFromJsonAsync<bool>(uri);
+            var validateToken = new ValidateToken() { Token = token, UserName = userName };
+
+            var validatedTokenValue = await _httpClient.PostAsJsonAsync(uri, validateToken);
+            
+            return validatedTokenValue.IsSuccessStatusCode;
         }
 
         public async Task<string?> LogUserIn(string username, string password)
         {
             var uri = $"{_apiRoot}/user/login";
 
-            User newUser = new User() { UserName = username, Password = password };
+            var newUser = new User
+            {
+                UserName = username,
+                Password = password
+            };
 
-            var result = await _httpClient.PostAsJsonAsync(uri, newUser);
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync(uri, newUser);
 
-            if (!result.IsSuccessStatusCode)
+                if (!result.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+
+                var jsonResult = JsonDocument.Parse(await result.Content.ReadAsStringAsync());
+
+                return jsonResult.RootElement.GetProperty("token").ToString();
+            }
+            catch
             {
                 return null;
             }
-
-            return await result.Content.ReadAsStringAsync();
         }
-
-        public async Task<bool?> LogUserOut()
-        {
-            var uri = $"{_apiRoot}/user/logout";
-
-            var result = await _httpClient.DeleteAsync(uri);
-
-            return result.IsSuccessStatusCode;
-        }
-
 
         //file
         public async Task<VDSFile?> GetFileAsync(int fileId)

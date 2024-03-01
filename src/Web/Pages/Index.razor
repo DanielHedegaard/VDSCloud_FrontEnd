@@ -5,18 +5,18 @@
 
 <PageTitle>Home</PageTitle>
 
-@if (!UserSession.LoggedIn())
+@if (!IsUserLoggedIn)
 {
     <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="text-center backgroundcolor">
         @if (CreateUserbool)
         {
-            <CreateuserComponent CreateUserClickedCallback="HandleCreateUser" UserSession="UserSession"/>
+            <CreateuserComponent/>
             <br/>
             <MudText Color="Color.Info">Already have an account? <MudLink Color="Color.Info" Underline="Underline.Always" OnClick="InvertCreateUserState">Sign in</MudLink></MudText>
         }
         else
         {
-            <LoginComponent UserSession="UserSession" LoginClickedCallback="HandleLogin"/>
+            <LoginComponent/>
             <br />
             <MudText Color="Color.Info">Don't have an account? <MudLink Color="Color.Info" Underline="Underline.Always" OnClick="InvertCreateUserState">Sign up</MudLink></MudText>
         }
@@ -24,7 +24,7 @@
 }
 else
 {
-    <Navbar LogoutCallback="HandleLogout"></Navbar>
+    <Navbar />
     <MudContainer MaxWidth="MaxWidth.ExtraExtraLarge" Class="text-center backgroundcolor">
         <HomeComponent />
     </MudContainer>
