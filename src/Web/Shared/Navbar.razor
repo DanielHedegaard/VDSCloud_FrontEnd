@@ -1,6 +1,6 @@
 ﻿@using Web.Models
 
-<MudAppBar Class="pt-5" Color="Color.Dark" Fixed="false" Elevation="1">
+<MudAppBar Class="pt-5" Color="Color.Dark" Fixed="true" Elevation="1">
     <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" />
     <MudSpacer />
     <MudLink Href="/">
@@ -8,7 +8,14 @@
     </MudLink>
     <MudSpacer />
 </MudAppBar>
-<MudDrawer Color="Color.Dark" Breakpoint="Breakpoint.SmAndUp" @bind-Open="@IsDrawerOpen" Elevation="1" Variant="@DrawerVariant.Responsive" PreserveOpenState="false">
+
+<br />
+<br />
+<br />
+<br />
+<div class="spaceDiv"/>
+
+<MudDrawer Color="Color.Dark" Breakpoint="Breakpoint.SmAndUp" @bind-Open="@IsDrawerOpen" Elevation="1" Variant="@DrawerVariant.Responsive" PreserveOpenState="false" Fixed="true">
     <MudDrawerHeader>
         <MudText Typo="Typo.h5">VDS Cloud <MudIcon Icon="@Icons.Material.Filled.Cloud" Color="Color.Tertiary" Class="cloudIcon"/></MudText>
     </MudDrawerHeader>
@@ -50,11 +57,21 @@
     }
     .logOutBtn {
         position: absolute;
-        bottom: 6.8%;
+        bottom:8%;
         width: 100%;
     }
     .cloudIcon{
         height:35px;
         width:40px;
     }
+    .spaceDiv{
+       margin-bottom:2%; 
+    }
+
+    @@media screen and (min-width: 1150px){
+        .spaceDiv{
+            margin-bottom:1%;
+        }
+    }
+
 </style>

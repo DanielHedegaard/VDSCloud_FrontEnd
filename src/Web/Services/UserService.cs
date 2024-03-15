@@ -1,17 +1,16 @@
-﻿using Blazored.LocalStorage;
+﻿using Microsoft.AspNetCore.Components;
 using Microsoft.IdentityModel.Tokens;
+using Models;
+using Web.Models;
 
 namespace Web.Services
 {
     public class UserService : IUserService
     {
-        private const string LoginTokenKey = "vdslogintoken";
-        private const string UserNameKey = "vdsusername";
-
-        private readonly ISyncLocalStorageService _storageService;
+        private readonly IStorageService _storageService;
         private readonly IApiService _apiService;
 
-        public UserService(ISyncLocalStorageService storageService, IApiService apiService)
+        public UserService(IStorageService storageService, IApiService apiService)
         {
             _storageService = storageService;
             _apiService = apiService;
@@ -23,15 +22,10 @@ namespace Web.Services
         {
             try
             {
-                if (!_storageService.ContainKey(LoginTokenKey) || !_storageService.ContainKey(UserNameKey))
-                {
-                    return false;
-                }
+                var token = _storageService.GetToken();
+                var userName = _storageService.GetUsername();
 
-                var token = _storageService.GetItem<string>(LoginTokenKey);
-                var userName = _storageService.GetItem<string>(UserNameKey);
-
-                if (token is null || userName is null)
+                if (string.IsNullOrEmpty(token) || string.IsNullOrEmpty(userName))
                 {
                     return false;
                 }
@@ -51,59 +45,70 @@ namespace Web.Services
             return false;
         }
 
-        public async Task<bool> LoginAsync(string username, string password)
+        public async Task<UserLogin> LoginAsync(string username, string password)
+        {
+            UserLogin login = new UserLogin();
+
+            if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
+            {
+                login.LoggedIn = false;
+                return login;
+            }
+
+            var token = await _apiService.LogUserIn(username, password);
+
+
+            if (token == null || string.IsNullOrEmpty(token.Token))
+            {
+                login.LoggedIn = false;
+                return login;
+            }
+
+            _storageService.SetToken(token.Token);
+            _storageService.SetUsername(username);
+            _storageService.SetUserId(token.UserId);
+
+            login.LoggedIn = true;
+            login.UserId = token.UserId;
+
+            return login;
+        }
+
+        public bool Logout()
+        {
+            _storageService.Clear();
+
+            return true;
+        }
+
+        public async Task<bool> CreateUserAsync(string username, string password)
         {
             if (username.IsNullOrEmpty() || password.IsNullOrEmpty())
             {
                 return false;
             }
 
-            var token = await _apiService.LogUserIn(username, password);
-
-            if (string.IsNullOrEmpty(token))
-            {
-                return false; 
-            }
-
-            _storageService.SetItem<string>(LoginTokenKey, token);
-            _storageService.SetItem<string>(UserNameKey, username);
-
-            return true;
-        }
-
-        public bool Logout()
-        {
-            _storageService.RemoveItem(LoginTokenKey);
-            _storageService.RemoveItem(UserNameKey);
-
-            return true;
-        }
-
-        public async Task<bool> CreateUserAsync(string userName, string password)
-        {
-            if (userName.IsNullOrEmpty() || password.IsNullOrEmpty())
-            {
-                return false;
-            }
-
-            var result = await _apiService.CreateUserAsync(userName, password);
+            var result = await _apiService.CreateUserAsync(username, password);
 
             if (result is null || result == false)
             {
                 return false;
             }
 
-            var token = await _apiService.LogUserIn(userName, password);
+            var token = await _apiService.LogUserIn(username, password);
 
-            if (string.IsNullOrEmpty(token))
+            if (token == null || string.IsNullOrEmpty(token.Token))
             {
                 return false;
             }
 
-            _storageService.SetItem<string>(LoginTokenKey, token);
-            _storageService.SetItem<string>(UserNameKey, userName);
+            _storageService.SetToken(token.Token);
+            _storageService.SetUsername(username);
+            _storageService.SetUserId(token.UserId);
 
             return true;
         }
+        
+        public int GetUserIdFromLocalStorage() => _storageService.GetUserId();
     }
 }

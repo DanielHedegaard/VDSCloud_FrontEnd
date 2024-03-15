@@ -27,9 +27,11 @@ namespace Web.Pages
             {
                 Session.UserLoggedInEvent += Handle_UserStateChanged;
                 Session.UserLoggedOutEvent += Handle_UserStateChanged;
-                Session.LoginOrCreateUserErrorEvent += Handle_LoginOrCreateUserError;
+                Session.ErrorEvent += Handle_ErrorEvent;
+                Session.SuccessEvent += Handle_SuccessEvent;
                 StateHasChanged();
             }
+
             IsUserLoggedIn = await Session.IsUserLoggedIn();
         }
 
@@ -39,7 +41,7 @@ namespace Web.Pages
             StateHasChanged();
         }
 
-        private void Handle_LoginOrCreateUserError(string snackbarMessage)
+        private void Handle_ErrorEvent(string snackbarMessage)
         {
             Snackbar.Add(snackbarMessage, Severity.Error, config =>
             {
@@ -47,8 +49,21 @@ namespace Web.Pages
                 config.IconColor = Color.Primary;
                 config.IconSize = Size.Large;
             });
+
             StateHasChanged();
         }   
+
+        private void Handle_SuccessEvent(string snackbarMessage)
+        {
+            Snackbar.Add(snackbarMessage, Severity.Success, config =>
+            {
+                config.Icon = Icons.Material.Filled.Check;
+                config.IconColor = Color.Primary;
+                config.IconSize = Size.Large;
+            });
+
+            StateHasChanged();
+        }
 
         public void InvertCreateUserState() => CreateUserbool = !CreateUserbool;
     }

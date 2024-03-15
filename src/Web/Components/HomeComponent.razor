@@ -1,7 +1,9 @@
 ﻿@using Web.Models
 @using Web.Services
 @using global::Models
+
 @inject IJSRuntime JsRuntime
+@inject IDialogService DialogService
 
 <br />
 <br />
@@ -12,54 +14,93 @@
     <MudItem xl="1"></MudItem>
     <MudItem xl="10">
         <MudCard Class="treeViewCard">
-            <MudTreeView Dense="false" Items="@TreeItems" Hover="true" Width="100%" Height="100%">
-                <ItemTemplate Context="item">
-                    <MudTreeViewItem Items="@item.TreeItems" Icon="@item.Icon" IconColor="Color.Warning">
-                        <BodyContent>
-                            <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
-                                @if (windowWidth < 1000)
-                                {
-                                    <MudText Style="justify-self: start;">@item.Text</MudText>
-                                    <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Primary">
-                                        @if (item.Icon == Icons.Material.Filled.Folder)
-                                        {
+            @if (!IsFolderEmpty())
+            {
+                <MudTreeView Dense="false" Items="@UserFolderFiles" Hover="true" Width="100%" Height="100%">
+                    <ItemTemplate Context="file">
+                        <MudTreeViewItem Items="@file.FileSOItem" Icon="@file.FSIconType" IconColor="@file.Color">
+                            <BodyContent>
+                                <div style="display: grid; grid-template-columns: 1fr auto; align-items: center; width: 100%">
+                                    @if (windowWidth < 1000)
+                                    {
+                                        <MudText Style="justify-self: start;">@file.Name</MudText>
+                                        <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Primary">
+                                            @if (file.FSIconType == Icons.Material.Filled.Folder)
+                                            {
+                                                <MudMenuItem>
+                                                    <MudMenu AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
+                                                 <ActivatorContent>
+                                                     <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success" />
+                                                 </ActivatorContent>
+                                                 <ChildContent>
+                                                     <MudMenuItem>
+                                                         <MudButton OnClick="@(()=> OpenUploadFolderDialog(file.Id))">Folder<MudIcon Icon="@Icons.Material.Filled.Folder" Size="Size.Medium" Color="Color.Warning" /></MudButton>
+                                                     </MudMenuItem>
+                                                     <MudMenuItem>
+                                                         <MudButton OnClick="@(()=> OpenUploadFileDialog(file.Id))">File<MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Size="Size.Medium" Color="Color.Info" /></MudButton>
+                                                     </MudMenuItem>
+                                                 </ChildContent>
+                                             </MudMenu>
+                                         </MudMenuItem>
+                                            }
+                                            @if (file.FSIconType == Icons.Custom.FileFormats.FileDocument)
+                                            {
+                                                <MudMenuItem>
+                                                    <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Medium" Color="Color.Secondary" OnClick="() => Session.DownloadFileAsync(file.Id)" />
+                                                </MudMenuItem>
+                                            }
                                             <MudMenuItem>
-                                                <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success"></MudIconButton>
+                                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" OnClick="()=> OpenUpdateFileFolderDialog(file.Id, file.Type)" />
                                             </MudMenuItem>
-                                        }
-                                        <MudMenuItem>
-                                            <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Medium" Color="Color.Secondary"></MudIconButton>
-                                        </MudMenuItem>
-                                        <MudMenuItem>
-                                            <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" />
-                                        </MudMenuItem>
-                                        <MudMenuItem>
-                                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" />
-                                        </MudMenuItem>
-                                    </MudMenu>
-                                }
-                                @* if not mobile *@
-                                else
-                                {
-                                    <MudText Style="justify-self: start;">@item.Text</MudText>
-                                    <div style="justify-self: end;">
-                                        @if (item.Icon == Icons.Material.Filled.Folder)
-                                        {
-                                            <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success"></MudIconButton>
-                                        }
-                                        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Medium" Color="Color.Secondary"></MudIconButton>
-                                        <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" />
-                                        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" />
-                                    </div>
-                                }
-                            </div>
-                        </BodyContent>
-                    </MudTreeViewItem>
-                </ItemTemplate>
-            </MudTreeView>
+                                            <MudMenuItem>
+                                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" OnClick="()=> OpenDeleteFileFolderDialog(file.Id, file.Type)" />
+                                            </MudMenuItem>
+                                        </MudMenu>
+                                    }
+                                    @* if not mobile *@
+                                    else
+                                    {
+                                        <MudText Style="justify-self: start;">@file.Name</MudText>
+                                        <div style="justify-self: end;">
+                                            @if (file.FSIconType == Icons.Material.Filled.Folder)
+                                            {
+                                                <MudMenu Class="pt-2" ActivationEvent="MouseEvent.MouseOver" AnchorOrigin="Origin.TopRight" TransformOrigin="Origin.TopLeft" Dense>
+                                             <ActivatorContent>
+                                                 <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success" />
+                                             </ActivatorContent>
+                                             <ChildContent>
+                                                 <MudMenuItem>
+                                                     <MudButton OnClick="@(()=> OpenUploadFolderDialog(file.Id))">Folder<MudIcon Icon="@Icons.Material.Filled.Folder" Size="Size.Medium" Color="Color.Warning" /></MudButton>
+                                                 </MudMenuItem>
+                                                 <MudMenuItem>
+                                                     <MudButton OnClick="@(()=> OpenUploadFileDialog(file.Id))">File<MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Size="Size.Medium" Color="Color.Info" /></MudButton>
+                                                 </MudMenuItem>
+                                             </ChildContent>
+                                         </MudMenu>
+                                            }
+                                            @if (file.FSIconType == Icons.Custom.FileFormats.FileDocument)
+                                            {
+                                                <MudIconButton Class="mb-3" Icon="@Icons.Material.Filled.Download" Size="Size.Medium" Color="Color.Secondary" OnClick="() => Session.DownloadFileAsync(file.Id)" />
+                                            }
+                                            <MudIconButton Class="mb-3" Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" OnClick="() => OpenUpdateFileFolderDialog(file.Id, file.Type)" />
+                                            <MudIconButton Class="mb-3" Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" OnClick="()=> OpenDeleteFileFolderDialog(file.Id, file.Type)" />
+                                        </div>
+                                    }
+                                </div>
+                            </BodyContent>
+                        </MudTreeViewItem>
+                    </ItemTemplate>
+                </MudTreeView>
+            }
+            else
+            {
+                <MudText Class="pt-5" Typo="Typo.h6">No files available</MudText>
+                <MudText Class="pb-5" Typo="Typo.h6">Create new folder below to get started!</MudText>
+            }
             <MudSpacer />
             <MudSpacer />
-            <MudButton Size="Size.Large" Class="w-100 py-3">Add folder<MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success" /></MudButton>
+
+            <MudButton Size="Size.Large" Class="w-100 py-3" OnClick="@(()=> OpenUploadFolderDialog(0))">Add folder<MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success" /></MudButton>
         </MudCard>
     </MudItem>
     <MudItem xl="1"></MudItem>

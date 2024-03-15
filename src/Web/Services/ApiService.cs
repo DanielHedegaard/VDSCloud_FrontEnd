@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using Models;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 
@@ -17,39 +18,84 @@ namespace Web.Services
             _apiRoot = "https://localhost:7193/api";
         }
 
-        //user
-        public async Task<User?> GetUserAsync(int id)
+        //IsAlive
+        private async Task<bool> IsApiAliveAsync()
         {
-            var uri = $"{_apiRoot}/user?id={id}";
+            var uri = $"{_apiRoot}/isAlive";
 
-            return await _httpClient.GetFromJsonAsync<User>(uri);
+            try
+            {
+                var result = await _httpClient.GetAsync(uri);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
+        //user
         public async Task<bool?> CreateUserAsync(string userName, string password)
         {
+            var IsApiAlive = await IsApiAliveAsync();
+
+            if (!IsApiAlive)
+            {
+                return null;
+            }
+
             var uri = $"{_apiRoot}/user";
 
             var newUser = new User() { UserName = userName, Password = password };
 
-            var result = await _httpClient.PostAsJsonAsync(uri, newUser);
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync(uri, newUser);
 
-            return result.IsSuccessStatusCode;
+                return result.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         //login
         public async Task<bool?> IsTokenValid(string userName, string token)
         {
-            var uri = $"{_apiRoot}/user/istokenexpired";
+            var IsApiAlive = await IsApiAliveAsync();
+
+            if (!IsApiAlive)
+            {
+                return null;
+            }
+
+            var uri = $"{_apiRoot}/user/validatetoken";
 
             var validateToken = new ValidateToken() { Token = token, UserName = userName };
 
-            var validatedTokenValue = await _httpClient.PostAsJsonAsync(uri, validateToken);
-            
-            return validatedTokenValue.IsSuccessStatusCode;
+            try
+            {
+                var validatedTokenValue = await _httpClient.PostAsJsonAsync(uri, validateToken);
+
+                return validatedTokenValue.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
-        public async Task<string?> LogUserIn(string username, string password)
+        public async Task<ValidateToken?> LogUserIn(string username, string password)
         {
+            var IsApiAlive = await IsApiAliveAsync();
+
+            if (!IsApiAlive)
+            {
+                return null;
+            }
+
             var uri = $"{_apiRoot}/user/login";
 
             var newUser = new User
@@ -65,11 +111,17 @@ namespace Web.Services
                 if (!result.IsSuccessStatusCode)
                 {
                     return null;
-                }
+                }   
 
                 var jsonResult = JsonDocument.Parse(await result.Content.ReadAsStringAsync());
 
-                return jsonResult.RootElement.GetProperty("token").ToString();
+                var tokenResult = jsonResult.RootElement.GetProperty("token").ToString();
+
+                var id = jsonResult.RootElement.GetProperty("userId").GetInt32();
+               
+                ValidateToken token = new ValidateToken() { UserId = id, Token = tokenResult};
+
+                return token;
             }
             catch
             {
@@ -78,104 +130,175 @@ namespace Web.Services
         }
 
         //file
-        public async Task<VDSFile?> GetFileAsync(int fileId)
+        public async Task<bool?> CreateFileAsync(Stream stream, VDSFile file, int userId)
         {
-            var uri = $"{_httpClient}/file?id={fileId}";
+            var IsApiAlive = await IsApiAliveAsync();
 
-            return await _httpClient.GetFromJsonAsync<VDSFile>(uri);
-        }
+            if (!IsApiAlive)
+            {
+                return null;
+            }
 
-        public async Task<List<VDSFile>?> GetFileListAsync()
-        {
-            var uri = $"{_httpClient}/file";
+            var uri = $"{_apiRoot}/file?folderId={file.FolderId}&userId={userId}&fileName={file.FileName}";
+            
+            var streamContent = new StreamContent(stream);
 
-            return await _httpClient.GetFromJsonAsync<List<VDSFile>>(uri);
-        }
+            streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/octet-stream");
 
-        public async Task<bool?> CreateFileAsync(VDSFile file)
-        {
-            var uri = $"{_apiRoot}/file";
-
-            var result = await _httpClient.PostAsJsonAsync(uri, file);
-
-            return result.IsSuccessStatusCode;
+            try
+            {
+                var result = await _httpClient.PostAsync(uri, streamContent);
+             
+                return result.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<bool?> UpdateFileAsync(VDSFile file)
         {
-            var uri = $"{_apiRoot}/file";
+            var IsApiAlive = await IsApiAliveAsync();
 
-            var result = await _httpClient.PutAsJsonAsync(uri, file);
+            if (!IsApiAlive)
+            {
+                return null;
+            }
 
-            return result.IsSuccessStatusCode;
+            var uri = $"{_apiRoot}/file?id={file.Id}&newFileName={file.FileName}";
+
+            var fileContent = new StringContent(file?.ToString() ?? "");
+
+            try
+            {
+                var result = await _httpClient.PutAsync(uri, fileContent);
+             
+                return result.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<bool?> DeleteFileAsync(int fileId)
         {
-            var uri = $"/{_apiRoot}/file?id={fileId}";
+            var IsApiAlive = await IsApiAliveAsync();
 
-            var result = await _httpClient.DeleteAsync(uri);
+            if (!IsApiAlive)
+            {
+                return null;
+            }
 
-            return result.IsSuccessStatusCode;
+            var uri = $"{_apiRoot}/file?id={fileId}";
+
+            try
+            {
+                var result = await _httpClient.DeleteAsync(uri);
+
+                return result.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
 
         //folder
-        public async Task<Folder?> GetFolderAsync(int folderId)
+        public async Task<List<Folder>?> GetFolderStructureAsync(int userId)
         {
-            var uri = $"{_apiRoot}/folder?id={folderId}";
+            var IsApiAlive = await IsApiAliveAsync();
 
-            return await _httpClient.GetFromJsonAsync<Folder>(uri);
-        }
+            if (!IsApiAlive)
+            {
+                return null;
+            }
 
-        public async Task<List<Folder>?> GetFolderListAsync()
-        {
-            var uri = $"{_apiRoot}/folder";
+            var uri = $"{_apiRoot}/folder?userId={userId}";
 
-            return await _httpClient.GetFromJsonAsync<List<Folder>>(uri);
+            try
+            {
+                var result = await _httpClient.GetFromJsonAsync<List<Folder>>(uri);
+
+                return result;
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public async Task<bool?> CreateFolderAsync(Folder folder)
         {
+            var IsApiAlive = await IsApiAliveAsync();
+
+            if (!IsApiAlive)
+            {
+                return null;
+            }
+
             var uri = $"{_apiRoot}/folder";
 
-            var result = await _httpClient.PostAsJsonAsync<Folder>(uri, folder);
+            try
+            {
+                var result = await _httpClient.PostAsJsonAsync<Folder>(uri, folder);
 
-            return result?.IsSuccessStatusCode;
+                return result?.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<bool?> UpdateFolderAsync(Folder folder)
         {
-            var uri = $"{_apiRoot}/folder";
+            var IsApiAlive = await IsApiAliveAsync();
 
-            var result = await _httpClient.PutAsJsonAsync(uri, folder);
+            if (!IsApiAlive)
+            {
+                return null;
+            }
 
-            return result?.IsSuccessStatusCode;
+            var uri = $"{_apiRoot}/folder?folderId={folder.Id}&folderName={folder.FolderName}";
+
+            var folderContent = new StringContent(folder?.ToString() ?? "");
+
+            try
+            {
+                var result = await _httpClient.PutAsync(uri, folderContent);
+
+                return result?.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public async Task<bool?> DeleteFolderAsync(int folderId)
         {
-            var uri = $"{_apiRoot}/folder?id={folderId}";
+            var IsApiAlive = await IsApiAliveAsync();
 
-            var result = await _httpClient.DeleteAsync(uri);
+            if (!IsApiAlive)
+            {
+                return null;
+            }
 
-            return result?.IsSuccessStatusCode;
-        }
+            var uri = $"{_apiRoot}/folder?folderId={folderId}";
 
+            try
+            {
+                var result = await _httpClient.DeleteAsync(uri);
 
-        //log
-        public async Task<Log?> GetLogAsync(int logId)
-        {
-            var uri = $"{_apiRoot}/log?id={logId}";
-
-            return await _httpClient.GetFromJsonAsync<Log>(uri);
-        }
-
-        public async Task<List<Log>?> GetLogListAsync()
-        {
-            var uri = $"{_apiRoot}/log";
-
-            return await _httpClient.GetFromJsonAsync<List<Log>>(uri);
+                return result?.IsSuccessStatusCode;
+            }
+            catch
+            {
+                return false;
+            }
         }
     }
 }

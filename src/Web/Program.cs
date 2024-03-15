@@ -14,7 +14,9 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 builder.Services.AddBlazoredLocalStorageAsSingleton();
 builder.Services.AddSingleton<IApiService, ApiService>();
+builder.Services.AddSingleton<IStorageService, StorageService>();
 builder.Services.AddSingleton<IUserService, UserService>();
+builder.Services.AddSingleton<IFileservice, Fileservice>();
 builder.Services.AddSingleton<Session>();
 
 builder.Services.AddMudServices();
