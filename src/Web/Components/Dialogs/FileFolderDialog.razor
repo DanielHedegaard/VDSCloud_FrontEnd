@@ -1,0 +1,157 @@
+﻿@using Web.Models
+@using global::Models
+<MudDialog>
+    <DialogContent>
+        @if (FSType == FSType.File)
+        {
+            if (DialogType == DialogType.UploadFile)
+            {
+                <MudFileUpload T="IBrowserFile" FilesChanged="UploadFile">
+                    <ButtonTemplate>
+                        <MudButton HtmlTag="label"
+                                   Color="Color.Success"
+                                   StartIcon="@Icons.Material.Filled.CloudUpload"
+                                   for="@context.Id">
+                            Upload File
+                        </MudButton>
+                    </ButtonTemplate>
+                </MudFileUpload>
+            }
+            else if (DialogType == DialogType.DeleteFile)
+            {
+                <MudText Typo="Typo.h5">Are you sure you want to delete this file?</MudText>
+            }
+            else if (DialogType == DialogType.UpdateFile)
+            {
+                <MudTextField T="string" Label="Name" @bind-Value="File.FileName"></MudTextField>
+            }
+        }
+        else
+        {
+            if (DialogType == DialogType.UploadFolder || DialogType == DialogType.UpdateFolder)
+            {
+                <MudTextField T="string" Label="Name" @bind-Value="Folder.FolderName"></MudTextField>
+            }
+            else if(DialogType == DialogType.DeleteFolder)
+            {
+                <MudText Typo="Typo.h5">Are you sure you want to delete this folder? <MudText Color="Color.Error">Everything inside the folder will also be deleted!</MudText></MudText>
+            }
+        }
+
+    </DialogContent>
+    <DialogActions>
+        <MudButton Color="Color.Error" OnClick="Cancel">Cancel</MudButton>
+        @if (DialogType == DialogType.DeleteFile)
+        {
+            <MudButton Color="Color.Success" OnClick="DeleteFile">Yes</MudButton>
+        }
+        else if (DialogType == DialogType.UpdateFile)
+        {
+            <MudButton Color="Color.Info" OnClick="UpdateFile">Edit</MudButton>
+        }
+        else if(DialogType == DialogType.UploadFolder)
+        {
+            <MudButton Color="Color.Success" OnClick="UploadFolder">Create</MudButton>
+        }
+        else if(DialogType == DialogType.UpdateFolder)
+        {
+            <MudButton Color="Color.Info" OnClick="UpdateFolder">Edit</MudButton>
+        }
+        else if(DialogType == DialogType.DeleteFolder)
+        {
+            <MudButton Color="Color.Success" OnClick="DeleteFolder">Yes</MudButton>
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    MudDialogInstance MudDialog { get; set; }
+
+    [Inject]
+    public Session Session { get; set; }
+
+    [Parameter]
+    public int Id { get; set; }
+
+    [Parameter]
+    public DialogType DialogType { get; set; }
+
+    [Parameter]
+    public FSType FSType { get; set; }
+
+    public VDSFile File { get; set; } = new();
+    public Folder Folder { get; set; } = new();
+
+
+    private async void UploadFile(IBrowserFile file)
+    {
+        VDSFile vdsFile = new()
+            {
+                FolderId = Id,
+                FileName = file.Name
+            };
+
+        Stream stream = file.OpenReadStream();
+
+        await Session.UploadFileAsync(stream, vdsFile);
+
+        Session.UpdateFileFolderStructure();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task DeleteFile()
+    {
+        await Session.DeleteFileAsync(Id);
+
+        Session.UpdateFileFolderStructure();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task UpdateFile()
+    {
+        File.Id = Id;
+
+        await Session.UpdateFileAsync(File);
+
+        Session.UpdateFileFolderStructure();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task UploadFolder()
+    {
+        Folder.ParentFolderId = Id;
+
+        await Session.UploadFolderAsync(Folder);
+
+        Session.UpdateFileFolderStructure();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    private async Task UpdateFolder()
+    {
+        Folder.Id = Id;
+
+        await Session.UpdateFolderAsync(Folder);
+
+        Session.UpdateFileFolderStructure();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+
+    private async Task DeleteFolder()
+    {
+        await Session.DeleteFolderAsync(Id);
+
+        Session.UpdateFileFolderStructure();
+
+        MudDialog.Close(DialogResult.Ok(true));
+    }
+
+    void Cancel() => MudDialog.Cancel();
+}

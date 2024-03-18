@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
 using MudBlazor;
-using System.Security.Cryptography;
-using Web.Components.Dialogs.File;
-using Web.Components.Dialogs.Folder;
+using Web.Components.Dialogs;
 using Web.Models;
 
 namespace Web.Components
@@ -14,7 +11,7 @@ namespace Web.Components
         [Inject]
         public Session Session { get; set; }
 
-        public HashSet<FileSystemObject> UserFolderFiles { get; set; }
+        public HashSet<FileSystemObject>? UserFolderFiles { get; set; }
 
         private int windowHeight, windowWidth;
 
@@ -32,69 +29,57 @@ namespace Web.Components
             windowWidth = dimension.Width;
         }
 
-        private void OpenUploadFolderDialog(int parentId)
+        private void OpenFileFolderDialog(int id, FSType fSType, DialogType dialogType)
         {
-            DialogOptions closeOnEscapeKey = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true, CloseOnEscapeKey = true };
+            DialogOptions standardDialogOption = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true, CloseOnEscapeKey = true };
+            DialogOptions uploadDialogOption = new DialogOptions() { MaxWidth = MaxWidth.Small, CloseOnEscapeKey = true };
 
-            var dialogParameters = new DialogParameters<UploadFolderDialog>();
+            var dialogParameters = new DialogParameters<FileFolderDialog>();
+            dialogParameters.Add(x => x.FSType, fSType);
 
-            if (parentId != 0)
+            if (fSType == FSType.Folder)
             {
-                dialogParameters.Add(x => x.ParentId, parentId);
-            }
+                dialogType = DialogTypeToFolder(dialogType);
 
-            DialogService.Show<UploadFolderDialog>("Upload folder", dialogParameters, closeOnEscapeKey);
-        }
-
-        private void OpenDeleteFileFolderDialog(int id, FSType fsType)
-        {
-            DialogOptions dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true, CloseOnEscapeKey = true };
-
-            if (fsType == FSType.Folder)
-            {
-                var dialogParameters = new DialogParameters<DeleteFolderDialog>();
-                dialogParameters.Add(x => x.Id, id);
-
-                DialogService.Show<DeleteFolderDialog>("Delete folder", dialogParameters, dialogOptions);
+                dialogParameters.Add(x => x.DialogType, dialogType);
             }
             else
             {
-                var dialogParameters = new DialogParameters<DeleteFileDialog>();
-                dialogParameters.Add(x => x.Id, id);
-
-                DialogService.Show<DeleteFileDialog>("Delete file", dialogParameters, dialogOptions);
+                dialogParameters.Add(x => x.DialogType, dialogType);
             }
-        }
 
-        private void OpenUpdateFileFolderDialog(int id, FSType fsType)
-        {
-            DialogOptions dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true, CloseOnEscapeKey = true };
-
-            if (fsType == FSType.Folder)
+            if (id != 0)
             {
-                var dialogParameters = new DialogParameters<UpdateFolderDialog>();
                 dialogParameters.Add(x => x.Id, id);
-
-                DialogService.Show<UpdateFolderDialog>("Edit folder", dialogParameters, dialogOptions);
             }
-            else
-            {
-                var dialogParameters = new DialogParameters<UpdateFileDialog>();
-                dialogParameters.Add(x => x.Id, id);
 
-                DialogService.Show<UpdateFileDialog>("Edit file", dialogParameters, dialogOptions);
-            }
-        }
+            string dialogName = DialogTypeName(dialogType);
 
-        private void OpenUploadFileDialog(int id)
-        {
-            DialogOptions dialogOptions = new DialogOptions() { MaxWidth = MaxWidth.Small, CloseOnEscapeKey = true };
+            var dialogOption = standardDialogOption;
+
+            if (dialogType == DialogType.UploadFile){ dialogOption = uploadDialogOption; };
             
-            var dialogParameters = new DialogParameters<UploadFileDialog>();
-            dialogParameters.Add(x => x.ParentId, id);
-
-            DialogService.Show<UploadFileDialog>("Upload file", dialogParameters, dialogOptions);
+            DialogService.Show<FileFolderDialog>(dialogName, dialogParameters, dialogOption);
         }
+
+        private DialogType DialogTypeToFolder(DialogType dialogType) => dialogType switch
+        {
+            DialogType.UploadFile => DialogType.UploadFolder,
+            DialogType.UpdateFile => DialogType.UpdateFolder,
+            DialogType.DeleteFile => DialogType.DeleteFolder,
+            _ => DialogType.UploadFolder
+        };
+
+        private string DialogTypeName(DialogType dialogType) => dialogType switch
+        {
+            DialogType.UploadFile => "Upload file",
+            DialogType.UpdateFile => "Update file",
+            DialogType.DeleteFile => "Delete file",
+            DialogType.UploadFolder => "Upload folder",
+            DialogType.UpdateFolder => "Update folder",
+            DialogType.DeleteFolder => "Delete folder",
+            _ => ""
+        };
 
         private async void Handle_UpdateFileFolderStructure()
         {
@@ -104,7 +89,7 @@ namespace Web.Components
 
         private bool IsFolderEmpty() => UserFolderFiles == null || UserFolderFiles.Count == 0 ? true : false;
 
-        public class WindowDimensions
+        private class WindowDimensions
         {
             public int Width { get; set; }
             public int Height { get; set; }

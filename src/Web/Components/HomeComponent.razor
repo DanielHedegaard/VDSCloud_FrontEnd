@@ -34,10 +34,10 @@
                                                  </ActivatorContent>
                                                  <ChildContent>
                                                      <MudMenuItem>
-                                                         <MudButton OnClick="@(()=> OpenUploadFolderDialog(file.Id))">Folder<MudIcon Icon="@Icons.Material.Filled.Folder" Size="Size.Medium" Color="Color.Warning" /></MudButton>
+                                                         <MudButton OnClick="()=> OpenFileFolderDialog(file.Id, FSType.Folder, Dialogs.DialogType.UploadFolder)">Folder<MudIcon Icon="@Icons.Material.Filled.Folder" Size="Size.Medium" Color="Color.Warning" /></MudButton>
                                                      </MudMenuItem>
                                                      <MudMenuItem>
-                                                         <MudButton OnClick="@(()=> OpenUploadFileDialog(file.Id))">File<MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Size="Size.Medium" Color="Color.Info" /></MudButton>
+                                                         <MudButton OnClick="()=> OpenFileFolderDialog(file.Id, FSType.File, Dialogs.DialogType.UploadFile)">File<MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Size="Size.Medium" Color="Color.Info" /></MudButton>
                                                      </MudMenuItem>
                                                  </ChildContent>
                                              </MudMenu>
@@ -50,10 +50,10 @@
                                                 </MudMenuItem>
                                             }
                                             <MudMenuItem>
-                                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" OnClick="()=> OpenUpdateFileFolderDialog(file.Id, file.Type)" />
+                                                <MudIconButton Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" OnClick="()=> OpenFileFolderDialog(file.Id, file.Type, Dialogs.DialogType.UpdateFile)" />
                                             </MudMenuItem>
                                             <MudMenuItem>
-                                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" OnClick="()=> OpenDeleteFileFolderDialog(file.Id, file.Type)" />
+                                                <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" OnClick="()=> OpenFileFolderDialog(file.Id, file.Type, Dialogs.DialogType.DeleteFile)" />
                                             </MudMenuItem>
                                         </MudMenu>
                                     }
@@ -70,10 +70,10 @@
                                              </ActivatorContent>
                                              <ChildContent>
                                                  <MudMenuItem>
-                                                     <MudButton OnClick="@(()=> OpenUploadFolderDialog(file.Id))">Folder<MudIcon Icon="@Icons.Material.Filled.Folder" Size="Size.Medium" Color="Color.Warning" /></MudButton>
+                                                     <MudButton OnClick="()=> OpenFileFolderDialog(file.Id, FSType.Folder, Dialogs.DialogType.UploadFolder)">Folder<MudIcon Icon="@Icons.Material.Filled.Folder" Size="Size.Medium" Color="Color.Warning" /></MudButton>
                                                  </MudMenuItem>
                                                  <MudMenuItem>
-                                                     <MudButton OnClick="@(()=> OpenUploadFileDialog(file.Id))">File<MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Size="Size.Medium" Color="Color.Info" /></MudButton>
+                                                     <MudButton OnClick="()=> OpenFileFolderDialog(file.Id, FSType.File, Dialogs.DialogType.UploadFile)">File<MudIcon Icon="@Icons.Custom.FileFormats.FileDocument" Size="Size.Medium" Color="Color.Info" /></MudButton>
                                                  </MudMenuItem>
                                              </ChildContent>
                                          </MudMenu>
@@ -82,8 +82,8 @@
                                             {
                                                 <MudIconButton Class="mb-3" Icon="@Icons.Material.Filled.Download" Size="Size.Medium" Color="Color.Secondary" OnClick="() => Session.DownloadFileAsync(file.Id)" />
                                             }
-                                            <MudIconButton Class="mb-3" Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" OnClick="() => OpenUpdateFileFolderDialog(file.Id, file.Type)" />
-                                            <MudIconButton Class="mb-3" Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" OnClick="()=> OpenDeleteFileFolderDialog(file.Id, file.Type)" />
+                                            <MudIconButton Class="mb-3" Icon="@Icons.Material.Filled.Edit" Size="Size.Medium" Color="Color.Info" OnClick="() => OpenFileFolderDialog(file.Id, file.Type, Dialogs.DialogType.UpdateFile)" />
+                                            <MudIconButton Class="mb-3" Icon="@Icons.Material.Filled.Delete" Size="Size.Medium" Color="Color.Error" OnClick="()=> OpenFileFolderDialog(file.Id, file.Type, Dialogs.DialogType.DeleteFile)" />
                                         </div>
                                     }
                                 </div>
@@ -100,7 +100,7 @@
             <MudSpacer />
             <MudSpacer />
 
-            <MudButton Size="Size.Large" Class="w-100 py-3" OnClick="@(()=> OpenUploadFolderDialog(0))">Add folder<MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success" /></MudButton>
+            <MudButton Size="Size.Large" Class="w-100 py-3" OnClick="()=> OpenFileFolderDialog(0, FSType.Folder, Dialogs.DialogType.UploadFolder)"> Add folder<MudIcon Icon="@Icons.Material.Filled.Add" Size="Size.Medium" Color="Color.Success" /></MudButton>
         </MudCard>
     </MudItem>
     <MudItem xl="1"></MudItem>
